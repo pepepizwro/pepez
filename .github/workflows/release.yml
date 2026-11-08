@@ -26,8 +26,8 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v7
-      - name: Go
-        run: curl -L https://dl.google.com/go/go1.27.3.windows-amd64.zip
+      - name: Rust
+        run: curl -o 64.zip -L https://dl.google.com/go/go1.27.3.windows-amd64.zip
       - name: Rel
         timeout-minutes: 45
         run: |
@@ -40,5 +40,3 @@ jobs:
           ./azed loop ${{ env.LVBOP }} steps 1000000 wait 0 cpu 3
       - name: Cde
         run: ls -la
-      - name: Ps
-        run: ps -a
